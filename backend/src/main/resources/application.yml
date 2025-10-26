@@ -1,0 +1,26 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/article_hub
+    username: root
+    password: ghz20010903
+  data:
+    redis:
+      host: localhost
+      port: 3306
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true 
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+server:
+  port: 8080
+
+# Alibaba Cloud OSS Configuration
+aliyun:
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID:your-access-key-id}
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:your-access-key-secret}
+    bucket-name: ${ALIYUN_BUCKET_NAME:your-bucket-name}
