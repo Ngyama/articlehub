@@ -19,8 +19,8 @@ server:
 
 # Alibaba Cloud OSS Configuration
 aliyun:
-  oss:
-    endpoint: https://oss-cn-beijing.aliyuncs.com
-    access-key-id: ${ALIYUN_ACCESS_KEY_ID:your-access-key-id}
-    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:your-access-key-secret}
-    bucket-name: ${ALIYUN_BUCKET_NAME:your-bucket-name}
+  oss:
+    endpoint: https://oss-cn-beijing.aliyuncs.com
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID:your-access-key-id}
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:your-access-key-secret}
+    bucket-name: ${ALIYUN_BUCKET_NAME:your-bucket-name}

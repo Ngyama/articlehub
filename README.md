@@ -4,11 +4,27 @@ A full-stack web application for managing articles and categories with user auth
 
 ## Features
 
+### User Management
 - User registration and login
-- Article management (create, edit, delete, view)
-- Category management
-- File upload to cloud storage
-- Responsive web interface
+- JWT token authentication
+- Update user profile (nickname, email)
+- Update avatar (upload to Alibaba Cloud OSS)
+- Change password
+
+### Article Management
+- Create article with rich text editor
+- View article list with pagination
+- Edit article
+- Delete article
+- Upload cover image to Alibaba Cloud OSS
+- Article status management (published/draft)
+- Filter articles by category and status
+
+### Category Management
+- Create category
+- View category list
+- Edit category
+- Delete category
 
 ## Tech Stack
 
@@ -56,26 +72,31 @@ npm install
 
 ## Configuration
 
-Update `backend/src/main/resources/application.yml` with your database and Redis settings:
+Update `backend/src/main/resources/application.yml` with your database, Redis, and OSS settings:
 
 ```yaml
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/your_database
+    url: jdbc:mysql://localhost:3306/article_hub
     username: your_username
     password: your_password
   data:
     redis:
       host: localhost
       port: 6379
+
+aliyun:
+  oss:
+    endpoint: https://oss-ap-northeast-1.aliyuncs.com
+    access-key-id: your_access_key_id
+    access-key-secret: your_access_key_secret
+    bucket-name: your_bucket_name
 ```
 
-Set environment variables for Alibaba Cloud OSS:
-```bash
-export ALIYUN_ACCESS_KEY_ID=your_access_key_id
-export ALIYUN_ACCESS_KEY_SECRET=your_access_key_secret
-export ALIYUN_BUCKET_NAME=your_bucket_name
-```
+**Note:** 
+- Create the MySQL database `article_hub` before running the application
+- Update the OSS endpoint according to your bucket region
+- Redis is configured but currently not used in the code
 
 ## Running the Application
 

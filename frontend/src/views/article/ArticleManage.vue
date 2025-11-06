@@ -36,7 +36,7 @@ const onCurrentChange = (num) => {
 
 
 // Load article categories
-import { articleCategoryListService, articleListService,articleAddService } from '@/api/article.js'
+import { articleCategoryListService, articleListService, articleAddService, articleUpdateService, articleDeleteService } from '@/api/article.js'
 const articleCategoryList = async () => {
     let result = await articleCategoryListService();
 
@@ -77,8 +77,13 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css'
 import { Plus } from '@element-plus/icons-vue'
 // Control drawer visibility
 const visibleDrawer = ref(false)
+// Control edit mode
+const isEdit = ref(false)
+// Drawer title
+const drawerTitle = ref('Add Article')
 // Add form data model
 const articleModel = ref({
+    id: null,
     title: '',
     categoryId: '',
     coverImg: '',
@@ -97,22 +102,90 @@ const uploadSuccess = (result)=>{
     console.log(result.data);
 }
 
-// Add article
+// Clear form data
+const clearArticleModel = () => {
+    articleModel.value = {
+        id: null,
+        title: '',
+        categoryId: '',
+        coverImg: '',
+        content: '',
+        state: ''
+    }
+}
+
+// Show edit drawer
+const showEditDrawer = (row) => {
+    isEdit.value = true
+    drawerTitle.value = 'Edit Article'
+    // Copy article data to form
+    articleModel.value.id = row.id
+    articleModel.value.title = row.title
+    articleModel.value.categoryId = row.categoryId
+    articleModel.value.coverImg = row.coverImg
+    articleModel.value.content = row.content
+    articleModel.value.state = row.state
+    // Open drawer
+    visibleDrawer.value = true
+}
+
+// Add or update article
 import {ElMessage} from 'element-plus'
 const addArticle = async (clickState)=>{
     // Set publish status
     articleModel.value.state = clickState;
 
-    // Call API
-    let result = await articleAddService(articleModel.value);
-
-    ElMessage.success(result.msg? result.msg:'Added successfully');
+    let result
+    if (isEdit.value) {
+        // Update article
+        result = await articleUpdateService(articleModel.value);
+        ElMessage.success(result.msg? result.msg:'Updated successfully');
+    } else {
+        // Add article
+        result = await articleAddService(articleModel.value);
+        ElMessage.success(result.msg? result.msg:'Added successfully');
+    }
 
     // Close drawer
     visibleDrawer.value = false;
+    // Reset edit mode
+    isEdit.value = false
+    drawerTitle.value = 'Add Article'
+    // Clear form
+    clearArticleModel()
 
     // Refresh list
     articleList()
+}
+
+// Delete article
+import {ElMessageBox} from 'element-plus'
+const deleteArticle = (row) => {
+    ElMessageBox.confirm(
+        'Are you sure you want to delete this article?',
+        'Warning',
+        {
+            confirmButtonText: 'Confirm',
+            cancelButtonText: 'Cancel',
+            type: 'warning',
+        }
+    )
+        .then(async () => {
+            // Call API
+            let result = await articleDeleteService(row.id);
+            ElMessage({
+                type: 'success',
+                message: 'Deleted successfully',
+            })
+            // Refresh list
+            articleList();
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: 'User cancelled deletion',
+            })
+        })
 }
 </script>
 <template>
@@ -121,7 +194,7 @@ const addArticle = async (clickState)=>{
             <div class="header">
                 <span>Article Management</span>
                 <div class="extra">
-                    <el-button type="primary" @click="visibleDrawer = true">Add Article</el-button>
+                    <el-button type="primary" @click="visibleDrawer = true; isEdit = false; drawerTitle = 'Add Article'; clearArticleModel()">Add Article</el-button>
                 </div>
             </div>
         </template>
@@ -153,8 +226,8 @@ const addArticle = async (clickState)=>{
             <el-table-column label="Status" prop="state"></el-table-column>
             <el-table-column label="Actions" width="100">
                 <template #default="{ row }">
-                    <el-button :icon="Edit" circle plain type="primary"></el-button>
-                    <el-button :icon="Delete" circle plain type="danger"></el-button>
+                    <el-button :icon="Edit" circle plain type="primary" @click="showEditDrawer(row)"></el-button>
+                    <el-button :icon="Delete" circle plain type="danger" @click="deleteArticle(row)"></el-button>
                 </template>
             </el-table-column>
             <template #empty>
@@ -167,7 +240,7 @@ const addArticle = async (clickState)=>{
             @current-change="onCurrentChange" style="margin-top: 20px; justify-content: flex-end" />
 
         <!-- Drawer -->
-        <el-drawer v-model="visibleDrawer" title="Add Article" direction="rtl" size="50%">
+        <el-drawer v-model="visibleDrawer" :title="drawerTitle" direction="rtl" size="50%">
             <!-- Add article form -->
             <el-form :model="articleModel" label-width="100px">
                 <el-form-item label="Article Title">

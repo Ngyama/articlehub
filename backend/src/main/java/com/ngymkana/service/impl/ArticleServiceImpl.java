@@ -54,4 +54,26 @@ public class ArticleServiceImpl implements ArticleService {
         pb.setItems(p.getResult());
         return pb;
     }
+
+    @Override
+    public void update(Article article) {
+        // Set update time
+        article.setUpdateTime(LocalDateTime.now());
+
+        // Get current user ID from ThreadLocal
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+        article.setCreateUser(userId);
+
+        articleMapper.update(article);
+    }
+
+    @Override
+    public void deleteById(Integer id) {
+        // Get current user ID from ThreadLocal
+        Map<String,Object> map = ThreadLocalUtil.get();
+        Integer userId = (Integer) map.get("id");
+
+        articleMapper.deleteById(id, userId);
+    }
 }

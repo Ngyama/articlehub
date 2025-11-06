@@ -9,4 +9,10 @@ public interface ArticleService {
 
     // Paginated list query with conditions
     PageBean<Article> list(Integer pageNum, Integer pageSize, Integer categoryId, String state);
+
+    // Update article
+    void update(Article article);
+
+    // Delete article by ID
+    void deleteById(Integer id);
 }

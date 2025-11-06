@@ -31,5 +31,14 @@ export const articleListService = (params)=>{
 // Add article
 export const articleAddService = (articleData)=>{
     return request.post('/article',articleData);
+}
 
+// Update article
+export const articleUpdateService = (articleData)=>{
+    return request.put('/article',articleData);
+}
+
+// Delete article
+export const articleDeleteService = (id)=>{
+    return request.delete('/article?id='+id);
 }
